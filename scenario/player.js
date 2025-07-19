@@ -1,10 +1,6 @@
-import Device from './device.js';
-
-export default class Player extends Device {
+export default class Player {
 
 constructor ( details ) {
-
-super ();
 
 this .details = Object .assign ( details, { player: this } );
 

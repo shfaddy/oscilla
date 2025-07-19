@@ -1,37 +1,43 @@
-import Device from '@shfaddy/oscilla/device';
-import Clock from '@shfaddy/oscilla/clock';
+import Instrument from '@shfaddy/oscilla/instrument';
 import Engine from '@shfaddy/oscilla/engine';
 import Player from '@shfaddy/oscilla/player';
+import Phone from '@shfaddy/oscilla/phone';
+import Parameter from '@shfaddy/oscilla/parameter';
+import Envelope from '@shfaddy/oscilla/envelope';
 
-export default class Oscilla extends Device {
+export default class Oscilla extends Instrument {
 
-constructor ( details = {} ) {
+body = 'aNote poscil aAmplitude, aFrequency';
 
-super ();
+constructor ( details = {
 
-this .details = Object .assign ( details, {
-
-oscilla: this,
+instruments: [],
+phones: [],
+tones: 0,
 score: []
 
-} );
+} ) {
 
-this .$clock = new Clock ( details );
-this .$beep = new Player ( Object .assign ( Object .create ( details ), { instrument: 'beep' } ) );
+super ( details );
+
+this .details = Object .assign ( details, { oscilla: this } );
+
+this .$envelope = new Envelope ( details );
 this .$record = new Engine ( details );
 
 };
 
-title = 'recording';
+$phone = Phone;
 
-$title ( _, ... argv ) {
+$pitch = new Parameter ( { value: 64 } );
+$distance = new Parameter ( { value: '0' } );
 
-return ! argv .length ? this .title : this .title = argv .join ( '-' );
+async $_producer ( _ ) {
+
+await _ .play ( '--direction', 'oscilla' );
+
+return super .$_producer ( _ );
 
 };
-
-key = 64;
-
-$key ( _, ... argv ) { return _ .play ( _, Symbol .for ( 'parameter' ), 'key', ... argv ) };
 
 };
