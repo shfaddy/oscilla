@@ -6,6 +6,7 @@ export default class Engine {
 constructor ( details ) {
 
 this .details = Object .assign ( details, { engine: this } );
+this .$_clock = details .clock;
 
 };
 
@@ -17,7 +18,8 @@ return;
 if ( argv .length )
 throw `I don't know what you mean by: "${ argv .join ( ' ' ) }"?`;
 
-const { oscilla, clock, score } = this .details;
+const { play: $ } = _;
+const { oscilla, score } = this .details;
 const path = oscilla .title + '.csd';
 
 await writeFile ( path, `
@@ -34,12 +36,36 @@ await writeFile ( path, `
 
 sr = 48000
 ksmps = 32
-nchnls = 2
+nchnls = 1
 0dbfs = 1
+
+gaNote init 0
+
+${ oscilla .code .join ( '\n\n' ) }
+
+instr mixer
+
+aNote clip gaNote, 1, 0dbfs
+
+out aNote
+
+gaNote = 0
+
+endin
 
 </CsInstruments>
 
 <CsScore>
+
+i "mixer" 0 -1
+
+s
+
+t 0 ${ await $ ( Symbol .for ( 'clock' ), 'tempo' ) }
+
+#define measure #${ await $ ( Symbol .for ( 'clock' ), 'measure' ) }#
+
+v [$measure]
 
 ${ score .join ( '\n' ) }
 

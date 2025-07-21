@@ -27,15 +27,8 @@ return $ ( Symbol .for ( 'senior' ), ... argv );
 if ( this .attachment !== undefined )
 value = [ value, ... this .attachment ] .join ( ' ' );
 
-if ( this .combinator !== undefined ) {
-
-const parameter = await $ ( Symbol .for ( 'direction' ) );
-const location = ( await $ ( Symbol .for ( 'location' ) ) ) .slice ( 1 );
-
-if ( location .length )
-value = [ await $ ( '~', ... location .slice ( 0, -2 ), parameter ), value ] .join ( this .combinator );
-
-}
+if ( this .combinator !== undefined )
+value = [ await $ ( '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
 
 return value;
 

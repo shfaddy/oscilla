@@ -1,38 +1,42 @@
 import Controller from '@shfaddy/oscilla/controller';
-import Tone from '@shfaddy/oscilla/tone';
 
 export default class Phone extends Controller {
 
-constructor ( details ) {
+constructor ( details, parameters ) {
 
-super ( details );
+super ( parameters ? { parameters } : details );
 
 this .details = Object .assign ( Object .create ( details ), { phone: this } );
 
+this .number = ++details .phones % 10 === 0 ? ++details .phones : details .phones;
+
 };
 
-$tone = Tone;
+get $number () { return this .number };
 
-async $_director ( _, ... argv ) {
+$phone = this .constructor;
 
-if ( ! argv .length )
+async $_director ( _, step, length ) {
+
+if ( step === undefined )
 return super .$_director ( _ );
 
-if ( typeof argv [ 0 ] === 'symbol' )
-return;
-
 const { play: $ } = _;
-const score = [];
-const note = _ .note = {
+const { score } = this .details;
 
-phone: this .number
+score .push ( [
 
-};
+`i 1.${ await $ ( 'number' ) }`,
+step,
+length,
+... await $ ( 'parameters' )
 
-for ( const [ scenario, tone ] of await $ ( '--directory', 'Tone' ) )
-score .push ( await $ ( _, tone, Symbol .for ( 'note' ) ) );
+] .join ( ' ' ) );
 
-return score;
+for ( const [ scenario, subphone ] of await $ ( '--directory', 'Phone' ) )
+await $ ( subphone, 'score', Symbol .for ( 'note' ), '.', '.' );
+
+return true;
 
 };
 

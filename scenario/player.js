@@ -1,35 +1,35 @@
-export default class Player {
+import Controller from '@shfaddy/oscilla/controller';
 
-constructor ( details ) {
+export default class Player extends Controller {
+
+$player = this .constructor;
+
+constructor ( details, parameters = {
+
+step: { value: '0', combinator: '+' },
+length: { value: '1/$measure' }
+
+} ) {
+
+super ( { parameters } );
 
 this .details = Object .assign ( details, { player: this } );
+this .$_oscilla = details .oscilla;
 
 };
 
 async $_director ( _, ... argv ) {
 
 if ( ! argv .length )
-return;
+return super .$_director ( _ );
 
 if ( typeof argv [ 0 ] === 'symbol' )
 return;
 
-const { score, instrument } = this .details;
+const parameters = await _ .play ( 'parameters' );
 
-await _ .play ( Symbol .for ( 'parameter' ), 'duration', argv .shift () );
-await _ .play ( Symbol .for ( 'parameter' ), 'detune', argv .shift () );
-
-score .push ( [
-
-`i "${ instrument }"`,
-this .playing !== true ? ( this .playing = true, 0 ) : '+',
-`[${ this .duration }]`,
-`[${ this .duration }]`,
-`[ $key + ${ this .detune }]`
-
-] .join ( ' ' ) );
-
-return _ .play ( _, ... argv );
+for ( const instrument of argv )
+await _ .play ( Symbol .for ( 'oscilla' ), 'kit', instrument, ... parameters );
 
 };
 

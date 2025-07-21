@@ -1,9 +1,8 @@
 import Instrument from '@shfaddy/oscilla/instrument';
+import Clock from '@shfaddy/oscilla/clock';
 import Engine from '@shfaddy/oscilla/engine';
-import Player from '@shfaddy/oscilla/player';
 import Phone from '@shfaddy/oscilla/phone';
-import Parameter from '@shfaddy/oscilla/parameter';
-import Envelope from '@shfaddy/oscilla/envelope';
+import Player from '@shfaddy/oscilla/player';
 
 export default class Oscilla extends Instrument {
 
@@ -12,8 +11,7 @@ body = 'aNote poscil aAmplitude, aFrequency';
 constructor ( details = {
 
 instruments: [],
-phones: [],
-tones: 0,
+phones: 0,
 score: []
 
 } ) {
@@ -22,15 +20,30 @@ super ( details );
 
 this .details = Object .assign ( details, { oscilla: this } );
 
-this .$envelope = new Envelope ( details );
-this .$record = new Engine ( details );
+this .$kit = new Phone ( this .details, {
+
+pitch: { value: '0' },
+sweep: { value: '0' },
+shift: { value: '0' },
+
+distance: { value: '0' },
+length: { value: '0' },
+attack: { value: '0' },
+decay: { value: '0' },
+sustain: { value: '0' },
+release: { value: '0' }
+
+} );
+this .$nota = new Player ( details, {
+
+step: { value: '0' },
+length: { value: '1/$measure' }
+
+} );
+this .$clock = new Clock ( details );
+this .$yallah = new Engine ( details );
 
 };
-
-$phone = Phone;
-
-$pitch = new Parameter ( { value: 64 } );
-$distance = new Parameter ( { value: '0' } );
 
 async $_producer ( _ ) {
 

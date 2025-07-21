@@ -1,8 +1,11 @@
+import Controller from '@shfaddy/oscilla/controller';
+import Parameter from '@shfaddy/oscilla/parameter';
+
 export default class Instrument {
 
 constructor ( details ) {
 
-this .details = details = Object .assign ( details, { instrument: this, instance: 0 } );
+this .details = Object .assign ( details, { instrument: this, instance: 0 } );
 
 this .code = details .code = [];
 this .number = details .number = details .instruments .push ( this );
@@ -10,6 +13,9 @@ this .number = details .number = details .instruments .push ( this );
 };
 
 $_producer () {
+
+if ( this .code .length )
+return;
 
 let { parameters, header, body } = this;
 const { code, number } = this;
@@ -24,7 +30,7 @@ this .details .parameters = parameters = this .constructor .parameters ( paramet
 code .push (
 
 Object .entries ( parameters )
-.map ( ( [ parameter, value ], index ) => `iP${ parameter [ 0 ] .toUpperCase () + parameter .slice ( 1 ) } init p ( ${ index + 4 } )` )
+.map ( ( [ parameter, { value } ], index ) => `iP${ parameter [ 0 ] .toUpperCase () + parameter .slice ( 1 ) } init p ( ${ index + 4 } )` )
 .join ( '\n' )
 
 );
@@ -52,14 +58,15 @@ static parameters ( parameters = {} ) {
 return Object .assign ( {
 
 pitch: { value: '0', combinator: '+' },
-sweep: { value: '16' },
-shift: { value: '6' },
+sweep: { value: '0', combinator: '+' },
+shift: { value: '0', combinator: '+' },
 
 distance: { value: '0', combinator: '+' },
-attack: { value: '4' },
-decay: { value: '3' },
-sustain: { value: '2' },
-release: { value: '1' }
+length: { value: '0', combinator: '+' },
+attack: { value: '0', combinator: '+' },
+decay: { value: '0', combinator: '+' },
+sustain: { value: '0', combinator: '+' },
+release: { value: '0', combinator: '+' }
 
 }, parameters );
 
@@ -67,20 +74,20 @@ release: { value: '1' }
 
 static amplitude = `
 
-${ [ 'Attack', 'Decay', 'Sustain', 'Release' ]
-.map ( variable => `i${ variable } init 1 / 2 ^ iP${ variable }` )
-.join ( '\n' ) }
+iLength init 1 / 2 ^ iPLength
 
-p3 init iPAttack + iPDecay + iPRelease
+iAttack init iLength / 2 ^ iPAttack
+iDecay init iLength / 2 ^ iPDecay
+iSustain init 1 / 2 ^ iPSustain
+iRelease init p3 / 2 ^ iPRelease
 
-aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, iRelease, 0
+p3 init p3 - iRelease
+
+aAmplitude linsegr 0, iAttack, 1, iDecay, iSustain, iRelease, 0
 
 ` .trim ();
 
 static frequency = `
-
-iPDetune += giPitch
-iPPitch += iPDetune
 
 iFrequency init 2 ^ ( ( 16 + iPPitch ) / 16 )
 iSweep init 2 ^ ( iPSweep / 16 )
