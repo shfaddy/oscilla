@@ -5,7 +5,11 @@ import Scenarist from '@shfaddy/scenarist/shell';
 
 try {
 
-await new Scenarist ( new Oscilla ) .publish ();
+await new Scenarist ( new Oscilla, {
+
+prefix: [ 'oscilla' ]
+
+} ) .publish ();
 
 } catch ( error ) {
 

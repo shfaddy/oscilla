@@ -34,7 +34,7 @@ length,
 ] .join ( ' ' ) );
 
 for ( const [ scenario, subphone ] of await $ ( '--directory', 'Phone' ) )
-await $ ( subphone, 'score', Symbol .for ( 'note' ), '.', '.' );
+await $ ( subphone, '.', '.' );
 
 return true;
 

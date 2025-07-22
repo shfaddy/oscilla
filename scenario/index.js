@@ -34,20 +34,20 @@ sustain: { value: '0' },
 release: { value: '0' }
 
 } );
-this .$nota = new Player ( details, {
-
-step: { value: '0' },
-length: { value: '1/$measure' }
-
-} );
 this .$clock = new Clock ( details );
 this .$yallah = new Engine ( details );
 
 };
 
-async $_producer ( _ ) {
+$_producer ( _ ) {
 
-await _ .play ( '--direction', 'oscilla' );
+this .details .$oscilla = _ .play;
+this .$nota = new Player ( this .details, {
+
+step: { value: '0' },
+length: { value: '1/$measure' }
+
+} );
 
 return super .$_producer ( _ );
 

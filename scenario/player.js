@@ -14,7 +14,7 @@ length: { value: '1/$measure' }
 super ( { parameters } );
 
 this .details = Object .assign ( details, { player: this } );
-this .$_oscilla = details .oscilla;
+this .$_oscilla = details .$oscilla;
 
 };
 
