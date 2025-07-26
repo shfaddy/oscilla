@@ -2,13 +2,16 @@ import Controller from '@shfaddy/oscilla/controller';
 
 export default class Phone extends Controller {
 
-constructor ( details, parameters ) {
+constructor ( details ) {
 
-super ( parameters ? { parameters } : details );
+super ( details );
 
-this .details = Object .assign ( Object .create ( details ), { phone: this } );
+this .details = Object .assign ( Object .create ( details ), { phone: this, parameters: {} } );
 
-this .number = ++details .phones % 10 === 0 ? ++details .phones : details .phones;
+this .number = [ details .number, ++details .phones % 10 === 0 ? ++details .phones : details .phones ] .join ( '.' );
+
+for ( const parameter of Object .keys ( details .parameters ) )
+this .details .parameters [ parameter ] = Object .assign ( { combinator: '+' }, details .parameters [ parameter ] );
 
 };
 
@@ -16,25 +19,19 @@ get $number () { return this .number };
 
 $phone = this .constructor;
 
-async $_director ( _, step, length ) {
+async $yallah ( { play: $ }, ... argv ) {
 
-if ( step === undefined )
-return super .$_director ( _ );
-
-const { play: $ } = _;
 const { score } = this .details;
 
 score .push ( [
 
-`i 1.${ await $ ( 'number' ) }`,
-step,
-length,
+`i ${ await $ ( 'number' ) }`,
 ... await $ ( 'parameters' )
 
 ] .join ( ' ' ) );
 
 for ( const [ scenario, subphone ] of await $ ( '--directory', 'Phone' ) )
-await $ ( subphone, '.', '.' );
+await $ ( subphone, 'yallah' );
 
 return true;
 

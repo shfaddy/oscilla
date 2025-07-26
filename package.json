@@ -28,7 +28,8 @@
   "type": "module",
   "exports": {
     ".": "./scenario/index.js",
-    "./*": "./scenario/*.js"
+    "./*": "./scenario/*.js",
+    "./kit/*": "./kit/*.js"
   },
   "bin": "./server.js",
   "dependencies": {

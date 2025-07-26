@@ -1,17 +1,23 @@
 export default class Parameter extends Map {
 
+attachment = [];
+
 constructor ( details ) {
 
 super ();
 
+this .details = details;
 this .value = details .value;
 
 if ( details .combinator !== undefined )
 this .combinator = details .combinator;
 
+if ( typeof details .system === 'number' )
+this .system = details .system;
+
 };
 
-async $_director ( { play: $ }, value, ... argv ) {
+async $_director ( _, value, ... argv ) {
 
 if ( typeof value === 'symbol' )
 return;
@@ -19,16 +25,21 @@ return;
 if ( value !== undefined )
 this .value = this .has ( value ) ? this .get ( value ) : value;
 
+const { play: $ } = _;
+
 if ( argv .length )
-return $ ( Symbol .for ( 'senior' ), ... argv );
+return $ ( _, Symbol .for ( 'senior' ), ... argv );
 
 ( { value } = this );
+
+if ( _ .system === true && typeof this .system === 'number' )
+value = parseInt ( value, this .system );
 
 if ( this .attachment !== undefined )
 value = [ value, ... this .attachment ] .join ( ' ' );
 
 if ( this .combinator !== undefined )
-value = [ await $ ( '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
+value = [ await $ ( _, '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
 
 return value;
 
@@ -36,7 +47,7 @@ return value;
 
 async $_wrapped ( _ ) {
 
-return `[${ ( await _ .play () ) .toString () }]`;
+return `[${ ( await _ .play ( Object .assign ( _, { system: true } ) ) ) .toString () }]`;
 
 };
 
@@ -57,7 +68,7 @@ $attach ( _, ... argv ) {
 if ( ! argv .length )
 throw "Nothing to attach";
 
-this .attachment = argv;
+this .attachment = [ ... this .attachment, ... argv ];
 
 return _ .play ();
 

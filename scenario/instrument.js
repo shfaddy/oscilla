@@ -1,14 +1,27 @@
-import Controller from '@shfaddy/oscilla/controller';
-import Parameter from '@shfaddy/oscilla/parameter';
+import Phone from '@shfaddy/oscilla/phone';
 
 export default class Instrument {
 
 constructor ( details ) {
 
-this .details = Object .assign ( details, { instrument: this, instance: 0 } );
+this .details = Object .assign ( details, { instrument: this, phones: -1 } );
 
-this .code = details .code = [];
 this .number = details .number = details .instruments .push ( this );
+this .parameters = details .parameters;
+this .header = details .header;
+this .body = details .body;
+
+};
+
+code = [];
+
+$code () { return this .code .join ( '\n\n' ) };
+
+$number () { return this .number };
+
+$_director ( _, ... argv ) {
+
+return _ .play ( Object .assign ( _, { details: this .details } ), '..', Symbol .for ( 'phone' ), ... argv );
 
 };
 
@@ -30,7 +43,7 @@ this .details .parameters = parameters = this .constructor .parameters ( paramet
 code .push (
 
 Object .entries ( parameters )
-.map ( ( [ parameter, { value } ], index ) => `iP${ parameter [ 0 ] .toUpperCase () + parameter .slice ( 1 ) } init p ( ${ index + 4 } )` )
+.map ( ( [ parameter, { value } ], index ) => `iP${ parameter [ 0 ] .toUpperCase () + parameter .slice ( 1 ) } init p ( ${ index + 2 } )` )
 .join ( '\n' )
 
 );
@@ -47,26 +60,27 @@ this .constructor .mixer
 
 code .push ( 'endin' );
 
+this .details .code .push ( code .join ( '\n\n' ) );
+
 };
-
-$code () { return this .code .join ( '\n\n' ) };
-
-$number () { return this .number };
 
 static parameters ( parameters = {} ) {
 
 return Object .assign ( {
 
-pitch: { value: '0', combinator: '+' },
-sweep: { value: '0', combinator: '+' },
-shift: { value: '0', combinator: '+' },
+step: { value: '0', combinator: '+' },
+length: { value: '1', combinator: '*' },
 
+pitch: { value: '0', system: 16, combinator: '+' },
 distance: { value: '0', combinator: '+' },
-length: { value: '0', combinator: '+' },
-attack: { value: '0', combinator: '+' },
-decay: { value: '0', combinator: '+' },
-sustain: { value: '0', combinator: '+' },
-release: { value: '0', combinator: '+' }
+
+sweep: { value: '0' },
+shift: { value: '0' },
+
+attack: { value: '0' },
+decay: { value: '0' },
+sustain: { value: '0' },
+release: { value: '0' }
 
 }, parameters );
 
@@ -75,6 +89,12 @@ release: { value: '0', combinator: '+' }
 static amplitude = `
 
 iLength init 1 / 2 ^ iPLength
+
+if p3 < iLength then
+
+iLength init p3
+
+endif
 
 iAttack init iLength / 2 ^ iPAttack
 iDecay init iLength / 2 ^ iPDecay
@@ -89,7 +109,7 @@ aAmplitude linsegr 0, iAttack, 1, iDecay, iSustain, iRelease, 0
 
 static frequency = `
 
-iFrequency init 2 ^ ( ( 16 + iPPitch ) / 16 )
+iFrequency init 2 ^ ( 4 + ( iPPitch / 16 ) )
 iSweep init 2 ^ ( iPSweep / 16 )
 iShift init 1 / 2 ^ iPShift
 
