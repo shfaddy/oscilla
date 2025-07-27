@@ -88,22 +88,12 @@ release: { value: '0' }
 
 static amplitude = `
 
-iLength init 1 / 2 ^ iPLength
-
-if p3 < iLength then
-
-iLength init p3
-
-endif
-
-iAttack init iLength / 2 ^ iPAttack
-iDecay init iLength / 2 ^ iPDecay
+iAttack init iPLength / 2 ^ iPAttack
+iDecay init iPLength / 2 ^ iPDecay
 iSustain init 1 / 2 ^ iPSustain
-iRelease init p3 / 2 ^ iPRelease
+iRelease init iPLength / 2 ^ iPRelease
 
-p3 init p3 - iRelease
-
-aAmplitude linsegr 0, iAttack, 1, iDecay, iSustain, iRelease, 0
+aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, iPLength - iAttack - iDecay - iRelease, iSustain, iRelease, 0
 
 ` .trim ();
 

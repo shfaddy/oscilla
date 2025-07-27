@@ -28,22 +28,12 @@ iPDecay init p ( 9 )
 iPSustain init p ( 10 )
 iPRelease init p ( 11 )
 
-iLength init 1 / 2 ^ iPLength
-
-if p3 < iLength then
-
-iLength init p3
-
-endif
-
-iAttack init iLength / 2 ^ iPAttack
-iDecay init iLength / 2 ^ iPDecay
+iAttack init iPLength / 2 ^ iPAttack
+iDecay init iPLength / 2 ^ iPDecay
 iSustain init 1 / 2 ^ iPSustain
-iRelease init p3 / 2 ^ iPRelease
+iRelease init iPLength / 2 ^ iPRelease
 
-p3 init p3 - iRelease
-
-aAmplitude linsegr 0, iAttack, 1, iDecay, iSustain, iRelease, 0
+aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, iPLength - iAttack - iDecay - iRelease, iSustain, iRelease, 0
 
 iFrequency init 2 ^ ( 4 + ( iPPitch / 16 ) )
 iSweep init 2 ^ ( iPSweep / 16 )
@@ -83,14 +73,14 @@ t 0 120
 
 v [$measure]
 
-i 1.1 [0+0] [(1/$measure)*1] [64+0] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure)] [(1/$measure)*1] [64+1] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+5] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+6] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+10] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+11] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+15] [0+0] [0] [0] [3] [6] [3] [3]
-i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+16] [0+0] [0] [0] [3] [6] [3] [3]
+i 1.1 [0+0] [(1/$measure)*1] [64+0] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure)] [(1/$measure)*1] [64+1] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+5] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+6] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+10] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+11] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+15] [0+0] [0] [0] [3] [3] [3] [3]
+i 1.1 [0+0 +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure) +(1/$measure)] [(1/$measure)*1] [64+16] [0+0] [0] [0] [3] [3] [3] [3]
 
 </CsScore>
 

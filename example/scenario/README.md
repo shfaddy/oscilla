@@ -12,7 +12,7 @@ sine main
 main .
 
 attack 3
-decay 6
+decay 3
 sustain 3
 release 3
 
