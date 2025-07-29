@@ -10,11 +10,20 @@ this .details = Object .assign ( Object .create ( details ), { sound: this } );
 
 };
 
+$_producer ( { play: $ } ) {
+
+this .details .$sound = $;
+
+};
+
 $_module = Module;
 $_phone = Phone;
 
+$chord = new Parameter ( { value: '1' } );
+$ornaments = new Parameter ( { value: '1' } );
+
 $step = new Parameter ( { value: '0', combinator: '+' } );
-$length = new Parameter ( { value: '1', combinator: '*' } );
+$length = new Parameter ( { value: '1', combinator: '*', attachment: [ '/', '$ornaments' ] } );
 $pitch = new Parameter ( { value: '0', system: 16, combinator: '+' } );
 $distance = new Parameter ( { value: '0', combinator: '+' } );
 
@@ -41,7 +50,9 @@ details: Object .assign ( Object .create ( this .details ), { parameters, header
 
 };
 
-async $yallah ( { play: $ }, ... argv ) {
+async $yallah ( _, ... argv ) {
+
+const { play: $ } = _;
 
 if ( argv .length )
 await $ ( 'step', argv .shift () );
@@ -49,10 +60,33 @@ await $ ( 'step', argv .shift () );
 if ( argv .length )
 await $ ( 'length', argv .shift () );
 
+const { score } = this .details;
+
+score .push ( [
+
+';', 
+( await $ ( '--location' ) ) .join ( '/' ),
+`at step ${ await $ ( 'step' ) }`,
+`for length ${ await $ ( 'length' ) }`,
+`with pitch ${ await $ ( 'pitch' ) }`,
+`and distance ${ await $ ( 'distance' ) }`
+
+] .join ( ' ' ) );
+
+score .push (
+
+`{ ${ await $ ( Object .assign ( _, { unwrapped: true } ), 'chord' ) } chord`,
+`#define ornaments #${ await $ ( _, 'ornaments' ) }#`,
+'{ $ornaments ornament'
+
+);
+
 for ( const [ _, phone ] of await $ ( '--directory', 'Phone' ) )
 await $ ( phone, 'yallah' );
 
-return;
+score .push ( '}', '}' );
+
+return true;
 
 };
 

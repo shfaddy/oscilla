@@ -10,10 +10,13 @@ this .details = details;
 this .value = details .value;
 
 if ( details .combinator !== undefined )
-this .combinator = details .combinator;
+this .combinator = [ ' ', details .combinator .trim (), ' ' ] .join ( '' );
 
 if ( typeof details .system === 'number' )
 this .system = details .system;
+
+if ( details .attachment instanceof Array )
+this .attachment = [ ... this .attachment, ... details .attachment ];
 
 };
 
@@ -35,19 +38,19 @@ return $ ( Object .assign ( _, { parameter: true } ), Symbol .for ( 'senior' ), 
 if ( _ .system === true && typeof this .system === 'number' )
 value = parseInt ( value, this .system );
 
-if ( this .attachment !== undefined )
-value = [ value, ... this .attachment ] .join ( ' ' );
-
 if ( this .combinator !== undefined )
 value = [ await $ ( _, '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
 
-return value;
+if ( this .attachment !== undefined )
+value = [ value, ... this .attachment ] .join ( ' ' );
+
+return _ .unwrapped === true ? value : `( ${ value } )`;
 
 };
 
 async $_wrapped ( _ ) {
 
-return `[${ ( await _ .play ( Object .assign ( _, { system: true } ) ) ) .toString () }]`;
+return `[ ${ ( await _ .play ( Object .assign ( _, { system: true } ) ) ) .toString () } ]`;
 
 };
 

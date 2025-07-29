@@ -1,6 +1,6 @@
 export const parameters = {
 
-FM: { value: '0', combinator: '+' }
+FM: { value: '0' }
 
 };
 export const body = `

@@ -57,13 +57,13 @@ i "mixer" 0 -1
 
 s
 
-t 0 ${ await $oscilla ( 'tempo' ) }
+t 0 [ ${ await $oscilla ( 'tempo' ) } ]
 
 #define measure #${ await $oscilla ( 'measure' ) }#
 
-v [$measure]
+v [ $measure ]
 
-${ score .join ( '\n' ) }
+${ score .join ( '\n\n' ) }
 
 </CsScore>
 
