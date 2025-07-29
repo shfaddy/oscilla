@@ -28,7 +28,7 @@ this .value = this .has ( value ) ? this .get ( value ) : value;
 const { play: $ } = _;
 
 if ( argv .length )
-return $ ( _, Symbol .for ( 'senior' ), ... argv );
+return $ ( Object .assign ( _, { parameter: true } ), Symbol .for ( 'senior' ), ... argv );
 
 ( { value } = this );
 

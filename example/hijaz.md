@@ -1,33 +1,33 @@
 ```scenario oscilla
 
-pitch 0 yallah
+pitch 0
 
 step attach +(1/$measure)
 
-pitch 1 yallah
+pitch 1
 
 step attach +(1/$measure)
 
-pitch 5 yallah
+pitch 5
 
 step attach +(1/$measure)
 
-pitch 6 yallah
+pitch 6
 
 step attach +(1/$measure)
 
-pitch a yallah
+pitch a
 
 step attach +(1/$measure)
 
-pitch b yallah
+pitch b
 
 step attach +(1/$measure)
 
-pitch f yallah
+pitch f
 
 step attach +(1/$measure)
 
-pitch 10 yallah
+pitch 10
 
 ```

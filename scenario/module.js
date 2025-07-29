@@ -1,12 +1,10 @@
-import Phone from '@shfaddy/oscilla/phone';
-
-export default class Instrument {
+export default class Module {
 
 constructor ( details ) {
 
-this .details = Object .assign ( details, { instrument: this, phones: -1 } );
+this .details = Object .assign ( details, { module: this, phones: 0 } );
 
-this .number = details .number = details .instruments .push ( this );
+this .number = details .number = details .modules .push ( this );
 this .parameters = details .parameters;
 this .header = details .header;
 this .body = details .body;
@@ -20,6 +18,9 @@ $code () { return this .code .join ( '\n\n' ) };
 $number () { return this .number };
 
 $_director ( _, ... argv ) {
+
+if ( ! argv .length )
+return _ .play ( '--directory' );
 
 return _ .play ( Object .assign ( _, { details: this .details } ), '..', Symbol .for ( 'phone' ), ... argv );
 
@@ -74,7 +75,7 @@ length: { value: '1', combinator: '*' },
 pitch: { value: '0', system: 16, combinator: '+' },
 distance: { value: '0', combinator: '+' },
 
-sweep: { value: '0' },
+sweep: { value: '0', system: 16 },
 shift: { value: '0' },
 
 attack: { value: '0' },
@@ -88,12 +89,18 @@ release: { value: '0' }
 
 static amplitude = `
 
-iAttack init iPLength / 2 ^ iPAttack
-iDecay init iPLength / 2 ^ iPDecay
+iAttack init 1 / 2 ^ iPAttack
+iDecay init 1 / 2 ^ iPDecay
 iSustain init 1 / 2 ^ iPSustain
-iRelease init iPLength / 2 ^ iPRelease
+iRelease init 1 / 2 ^ iPRelease
 
-aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, iPLength - iAttack - iDecay - iRelease, iSustain, iRelease, 0
+if p3 < iAttack + iDecay + iRelease then
+
+p3 init iAttack + iDecay + iRelease
+
+endif
+
+aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, p3 - iAttack - iDecay - iRelease, iSustain, iRelease, 0
 
 ` .trim ();
 
