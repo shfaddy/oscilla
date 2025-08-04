@@ -1,13 +1,13 @@
 export default class Module {
 
-constructor ( details ) {
+constructor ( setting ) {
 
-this .details = Object .assign ( details, { module: this, phones: 0 } );
+this .setting = Object .assign ( setting, { module: this, phones: 0 } );
 
-this .number = details .number = details .modules .push ( this );
-this .parameters = details .parameters;
-this .header = details .header;
-this .body = details .body;
+this .number = setting .number = setting .modules .push ( this );
+this .parameters = setting .parameters;
+this .header = setting .header;
+this .body = setting .body;
 
 };
 
@@ -22,7 +22,7 @@ $_director ( _, ... argv ) {
 if ( ! argv .length )
 return _ .play ( '--directory' );
 
-return _ .play ( Object .assign ( _, { details: this .details } ), '..', Symbol .for ( 'phone' ), ... argv );
+return _ .play ( Object .assign ( _, { setting: this .setting } ), '..', Symbol .for ( 'phone' ), ... argv );
 
 };
 
@@ -39,7 +39,7 @@ code .push ( header );
 
 code .push ( `instr ${ number }` );
 
-this .details .parameters = parameters = this .constructor .parameters ( parameters );
+this .setting .parameters = parameters = this .constructor .parameters ( parameters );
 
 code .push (
 
@@ -61,7 +61,7 @@ this .constructor .mixer
 
 code .push ( 'endin' );
 
-this .details .code .push ( code .join ( '\n\n' ) );
+this .setting .code .push ( code .join ( '\n\n' ) );
 
 };
 
@@ -96,7 +96,9 @@ iRelease init 1 / 2 ^ iPRelease
 
 if p3 < iAttack + iDecay + iRelease then
 
-p3 init iAttack + iDecay + iRelease
+iAttack *= p3
+iDecay *= p3
+iRelease *= p3
 
 endif
 
@@ -105,6 +107,8 @@ aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, p3 - iAttack - iDecay - iRele
 ` .trim ();
 
 static frequency = `
+
+print iPPitch
 
 iFrequency init 2 ^ ( 4 + ( iPPitch / 16 ) )
 iSweep init 2 ^ ( iPSweep / 16 )

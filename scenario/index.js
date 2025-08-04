@@ -4,7 +4,7 @@ import Engine from '@shfaddy/oscilla/engine';
 
 export default class Oscilla {
 
-static details = {
+static setting = {
 
 modules: [],
 code: [],
@@ -12,17 +12,17 @@ score: []
 
 };
 
-constructor ( details = this .constructor .details ) {
+constructor ( setting = this .constructor .setting ) {
 
-this .details = Object .assign ( details, { oscilla: this } );
+this .setting = Object .assign ( setting, { oscilla: this } );
 
-this .$yallah = new Engine ( details );
+this .$yallah = new Engine ( setting );
 
 };
 
 $_producer ( _ ) {
 
-this .details .$oscilla = _ .play;
+this .setting .$oscilla = _ .play;
 
 };
 

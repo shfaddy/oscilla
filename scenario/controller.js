@@ -2,14 +2,14 @@ import Parameter from './parameter.js';
 
 export default class Controller extends Set {
 
-constructor ( details ) {
+constructor ( setting ) {
 
-super ( typeof details ?.parameters === 'object' ? Object .keys ( details .parameters ) : undefined );
+super ( typeof setting ?.parameters === 'object' ? Object .keys ( setting .parameters ) : undefined );
 
-this .details = details;
+this .setting = setting;
 
 for ( const parameter of [ ... this ] )
-this [ '$' + parameter ] = new Parameter ( details .parameters [ parameter ] );
+this [ '$' + parameter ] = new Parameter ( setting .parameters [ parameter ] );
 
 };
 

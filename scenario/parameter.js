@@ -2,21 +2,21 @@ export default class Parameter extends Map {
 
 attachment = [];
 
-constructor ( details ) {
+constructor ( setting ) {
 
 super ();
 
-this .details = details;
-this .value = details .value;
+this .setting = setting;
+this .value = setting .value;
 
-if ( details .combinator !== undefined )
-this .combinator = [ ' ', details .combinator .trim (), ' ' ] .join ( '' );
+if ( setting .combinator !== undefined )
+this .combinator = [ ' ', setting .combinator .trim (), ' ' ] .join ( '' );
 
-if ( typeof details .system === 'number' )
-this .system = details .system;
+if ( typeof setting .system === 'number' )
+this .system = setting .system;
 
-if ( details .attachment instanceof Array )
-this .attachment = [ ... this .attachment, ... details .attachment ];
+if ( setting .attachment instanceof Array )
+this .attachment = [ ... this .attachment, ... setting .attachment ];
 
 };
 
@@ -35,14 +35,22 @@ return $ ( Object .assign ( _, { parameter: true } ), Symbol .for ( 'senior' ), 
 
 ( { value } = this );
 
-if ( _ .system === true && typeof this .system === 'number' )
+let attachment = [ ... this .attachment ];
+
+if ( _ .system === true && typeof this .system === 'number' ) {
+
 value = parseInt ( value, this .system );
+
+if ( attachment .length )
+attachment = attachment .map ( value => isNaN ( value ) ? value : parseInt ( value, this .system ) );
+
+}
+
+if ( attachment .length )
+value = [ value, ... attachment ] .join ( ' ' );
 
 if ( this .combinator !== undefined )
 value = [ await $ ( _, '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
-
-if ( this .attachment !== undefined )
-value = [ value, ... this .attachment ] .join ( ' ' );
 
 return _ .unwrapped === true ? value : `( ${ value } )`;
 

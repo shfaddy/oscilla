@@ -2,16 +2,16 @@ import Controller from '@shfaddy/oscilla/controller';
 
 export default class Phone extends Controller {
 
-constructor ( details ) {
+constructor ( setting ) {
 
-super ( details );
+super ( setting );
 
-this .details = Object .assign ( Object .create ( details ), { phone: this, parameters: {} } );
-this .$sound = details .$sound;
-this .number = [ details .number, ++details .phones % 10 === 0 ? ++details .phones : details .phones ] .join ( '.' );
+this .setting = Object .assign ( Object .create ( setting ), { phone: this, parameters: {} } );
+this .$sound = setting .$sound;
+this .number = [ setting .number, ++setting .phones % 10 === 0 ? ++setting .phones : setting .phones ] .join ( '.' );
 
-for ( const parameter of Object .keys ( details .parameters ) )
-this .details .parameters [ parameter ] = Object .assign ( { combinator: '+' }, details .parameters [ parameter ] );
+for ( const parameter of Object .keys ( setting .parameters ) )
+this .setting .parameters [ parameter ] = Object .assign ( { combinator: '+' }, setting .parameters [ parameter ] );
 
 };
 
@@ -21,7 +21,7 @@ $phone = this .constructor;
 
 async $yallah ( { play: $ }, ... argv ) {
 
-const { score } = this .details;
+const { score } = this .setting;
 const number = await $ ( 'number' );
 const instance = number .split ( '.' ) .pop ();
 const chord = await this .$sound ( 'chord' );

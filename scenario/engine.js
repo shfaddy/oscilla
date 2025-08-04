@@ -3,9 +3,9 @@ import { spawn } from 'node:child_process';
 
 export default class Engine {
 
-constructor ( details ) {
+constructor ( setting ) {
 
-this .details = details;
+this .setting = setting;
 
 };
 
@@ -15,7 +15,7 @@ if ( typeof argv [ 0 ] === 'symbol' )
 return;
 
 const { play: $ } = _;
-const { oscilla, $oscilla, code, score } = this .details;
+const { oscilla, $oscilla, code, score } = this .setting;
 const path = 'oscilla.csd';
 
 await writeFile ( path, `
@@ -25,6 +25,8 @@ await writeFile ( path, `
 <CsOptions>
 
 -o dac
+
+-L stdin
 
 </CsOptions>
 
@@ -49,13 +51,23 @@ gaNote = 0
 
 endin
 
+instr loopback
+
+rewindscore
+
+endin
+
+instr exit
+
+exitnow
+
+endin
+
 </CsInstruments>
 
 <CsScore>
 
 i "mixer" 0 -1
-
-s
 
 t 0 [ ${ await $oscilla ( 'tempo' ) } ]
 
@@ -65,17 +77,23 @@ v [ $measure ]
 
 ${ score .join ( '\n\n' ) }
 
+${
+
+this .loopback ? '' : '; '
+
+}i "loopback" [ 1 + ${ await $oscilla ( 'step' ) } ] 1
+
 </CsScore>
 
 </CsoundSynthesizer>
 
 ` .trim (), 'utf8' );
 
-this .process = spawn ( 'csound', [ path ], { stdio: 'ignore' } );
+this .process = spawn ( 'csound', [ path ], { stdio: [ 'pipe', 'ignore', 'ignore' ] } );
 
 _ .interrupt .then (
 
-() => this .process ? this .process .kill () : undefined
+() => this .process ? this .process .stdin .write ( 'i "exit" 0 0\n' ) : undefined
 
 );
 
@@ -98,5 +116,9 @@ reject ( "Playing synthesizer is interrupted" );
 } );
 
 };
+
+$once ( _ ) { return this .loopback = false, _ .play ( _ ) };
+
+$loopback ( _ ) { return this .loopback = true, _ .play ( _ ) };
 
 };

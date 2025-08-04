@@ -4,15 +4,15 @@ import Phone from '@shfaddy/oscilla/phone';
 
 export default class Sound {
 
-constructor ( details ) {
+constructor ( setting ) {
 
-this .details = Object .assign ( Object .create ( details ), { sound: this } );
+this .setting = Object .assign ( Object .create ( setting ), { sound: this } );
 
 };
 
 $_producer ( { play: $ } ) {
 
-this .details .$sound = $;
+this .setting .$sound = $;
 
 };
 
@@ -24,6 +24,7 @@ $ornaments = new Parameter ( { value: '1' } );
 
 $step = new Parameter ( { value: '0', combinator: '+' } );
 $length = new Parameter ( { value: '1', combinator: '*', attachment: [ '/', '$ornaments' ] } );
+
 $pitch = new Parameter ( { value: '0', system: 16, combinator: '+' } );
 $distance = new Parameter ( { value: '0', combinator: '+' } );
 
@@ -44,7 +45,7 @@ const { parameters, header, body } = await import ( '@shfaddy/oscilla/kit/' + mo
 
 return await $ ( Object .assign ( _, {
 
-details: Object .assign ( Object .create ( this .details ), { parameters, header, body } )
+setting: Object .assign ( Object .create ( this .setting ), { parameters, header, body } )
 
 } ), Symbol .for ( 'module' ), module, ... argv );
 
@@ -60,7 +61,7 @@ await $ ( 'step', argv .shift () );
 if ( argv .length )
 await $ ( 'length', argv .shift () );
 
-const { score } = this .details;
+const { score } = this .setting;
 
 score .push ( [
 

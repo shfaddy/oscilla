@@ -1,7 +1,31 @@
+# Tak Sound Design
+
+## Sub Phones
+
 ```scenario oscilla
 
-scenario read design.md
+import sine
 
-scenario read maqsum.md
+sine sub
+
+```
+
+## Body Phones
+
+```scenario oscilla
+
+import fm
+
+fm body
+
+```
+
+## Snatch Phones
+
+```scenario oscilla
+
+import noise
+
+noise snatch
 
 ```

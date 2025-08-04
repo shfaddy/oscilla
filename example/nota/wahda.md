@@ -2,7 +2,7 @@
 
 ```scenario oscilla
 
-yallah
-yallah (4/8)
+yallah 0
+yallah 4/8
 
 ```
