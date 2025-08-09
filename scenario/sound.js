@@ -16,7 +16,6 @@ this .setting .$sound = $;
 
 };
 
-$_module = Module;
 $_phone = Phone;
 
 $chord = new Parameter ( { value: '1' } );
@@ -39,15 +38,21 @@ return $ ( '--directory' );
 
 async $import ( _, module, ... argv ) {
 
+if ( module === undefined )
+throw "Which module to import?";
+
+const { kit } = this .setting;
+
+if ( kit .has ( module ) )
+return this [ '$' + module ] ? true : ( this [ '$' + module ] = kit .get ( module ), true );
+
 const { play: $ } = _;
 const { parameters, header, body } = await import ( '@shfaddy/oscilla/kit/' + module )
 .catch ( error => { throw `Could not find ${ module } in Shaikh Faddy's Kit` } );
 
-return await $ ( Object .assign ( _, {
+kit .set ( module, this [ '$' + module ] = new Module ( Object .assign ( Object .create ( this .setting ), { parameters, header, body } ) ) );
 
-setting: Object .assign ( Object .create ( this .setting ), { parameters, header, body } )
-
-} ), Symbol .for ( 'module' ), module, ... argv );
+return true;
 
 };
 

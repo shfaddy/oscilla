@@ -6,6 +6,7 @@ export default class Oscilla {
 
 static setting = {
 
+kit: new Map,
 modules: [],
 code: [],
 score: []

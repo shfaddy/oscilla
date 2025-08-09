@@ -108,8 +108,6 @@ aAmplitude linseg 0, iAttack, 1, iDecay, iSustain, p3 - iAttack - iDecay - iRele
 
 static frequency = `
 
-print iPPitch
-
 iFrequency init 2 ^ ( 4 + ( iPPitch / 16 ) )
 iSweep init 2 ^ ( iPSweep / 16 )
 iShift init 1 / 2 ^ iPShift
