@@ -47,10 +47,10 @@ attachment = attachment .map ( value => isNaN ( value ) ? value : parseInt ( val
 }
 
 if ( attachment .length )
-value = [ value, ... attachment ] .join ( ' ' );
+value = [ '(', value, ')', ... attachment ] .join ( ' ' );
 
 if ( this .combinator !== undefined )
-value = [ await $ ( _, '..', '..', await $ ( '--direction' ) ), value ] .join ( this .combinator );
+value = [ await $ ( _, '..', '..', await $ ( '--direction' ) ), '( ' + value + ' )' ] .join ( this .combinator );
 
 return _ .unwrapped === true ? value : `( ${ value } )`;
 
