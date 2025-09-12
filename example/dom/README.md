@@ -1,30 +1,32 @@
 # Dom Sound Design
 
-## Sub Phone
+```scenario oscilla
+
+pitch 0
+
+sweep 30
+shift 5
+
+attack 5
+decay 3
+sustain 3
+release 1
+
+```
+
+## Sub Phones
 
 ```scenario oscilla
 
 import sine
 
-sine sub .
-
-distance 0
-
-pitch -20
-
-sweep 40
-shift 6
-
-attack 5
-decay 4
-sustain 4
-release 1
+sine sub
 
 ```
 
 ### Higher Sub
 
-```scenario oscilla
+```scenario xoscilla
 
 --reproduce higher .
 
@@ -45,7 +47,7 @@ release 1
 
 ## Snatch Phone
 
-```scenario oscilla
+```scenario xoscilla
 
 ~ dom .
 
@@ -69,7 +71,7 @@ release 10
 
 ### Higher Snatch Phone
 
-```scenario oscilla
+```scenario xoscilla
 
 --reproduce higher .
 
@@ -80,7 +82,7 @@ distance 1
 
 #### Higher Snatch Phone
 
-```scenario oscilla
+```scenario xoscilla
 
 --reproduce higher .
 
@@ -91,7 +93,7 @@ distance 2
 
 ## Body Phone
 
-```scenario oscilla
+```scenario xoscilla
 
 ~ dom .
 

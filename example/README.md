@@ -1,17 +1,16 @@
-# Oscilla Example
+# xoscilla Example
 
 ```scenario oscilla
 
 sound dom
-sound tak
-
-```
-
-```scenario oscilla
 
 --produce nota
 
 dom --read from ~ nota wahda.md
+
+```
+
+```scenario xoscilla
 
 tak --read from ~ nota maqsum.md
 

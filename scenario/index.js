@@ -1,45 +1,116 @@
-import Parameter from '@shfaddy/oscilla/parameter';
-import Sound from '@shfaddy/oscilla/sound';
-import Engine from '@shfaddy/oscilla/engine';
+import Code from '@shfaddy/oscilla/code';
+import Instrument from '@shfaddy/oscilla/instrument';
+import { readFile, writeFile } from 'node:fs/promises';
+import { spawn } from 'node:child_process';
 
 export default class Oscilla {
 
-static setting = {
+constructor ( setting = {} ) {
 
-kit: new Map,
-modules: [],
-code: [],
-score: []
+this .setting = Object .assign ( setting, {
 
-};
+oscilla: this,
+instruments: 0,
+score: new Code
 
-constructor ( setting = this .constructor .setting ) {
-
-this .setting = Object .assign ( setting, { oscilla: this } );
-
-this .$yallah = new Engine ( setting );
+} );
 
 };
 
-$_producer ( _ ) {
+[ '$--options' ] = new Code;
 
-this .setting .$oscilla = _ .play;
+[ '$--header' ] = new Code;
+
+[ '$--instrument' ] = Instrument;
+
+get [ '$+' ] () { return this .setting .score };
+
+get [ '$--score' ] () { return this .setting .score };
+
+async [ '$--code' ] ( { play: $ } ) {
+
+const code = [];
+
+code .push ('<CsoundSynthesizer>' );
+
+code .push ( '<CsOptions>' );
+
+const options = await $ ( '--options' );
+
+if ( options .length )
+code .push ( options );
+
+code .push ( '</CsOptions>' );
+
+code .push ( '<CsInstruments>' );
+
+const header = await $ ( '--header' );
+
+if ( header .length )
+code .push ( header );
+
+const orchestra = await $ ( '--directory', 'Instrument' )
+.then ( orchestra => orchestra .map ( ( [ type, instrument ] ) => instrument ) );
+
+const instruments = await Promise .all ( orchestra .map (
+
+instrument => $ ( instrument, '--code' )
+
+) );
+
+if ( instruments .length )
+code .push ( instruments .join ( '\n\n' ) );
+
+code .push ( '</CsInstruments>' );
+
+code .push ( '<CsScore>' );
+
+const score = await $ ( '--score' );
+
+if ( score .length )
+code .push ( score );
+
+code .push ( '</CsScore>' );
+
+code .push ( '</CsoundSynthesizer>' );
+
+return code .join ( '\n\n' );
 
 };
 
-$sound = Sound;
+async $_director ( { play: $, interrupt }, ... argv ) {
 
-$tempo = new Parameter ( { value: 120 } );
-$measure = new Parameter ( { value: 4 } );
+if ( argv .length )
+throw "What?";
 
-$step = new Parameter ( { value: '0' } );
-$length = new Parameter ( { value: '(1/$measure)' } );
-$pitch = new Parameter ( { value: '40', system: 16 } );
-$distance = new Parameter ( { value: '0' } );
+const path = 'oscilla.csd';
 
-$_director ( { play: $ } ) {
+await writeFile ( path, await $ ( '--code' ), 'utf8' );
 
-return $ ( '--directory' );
+this .process = spawn ( 'csound', [ '--logfile=oscilla.log', path ], { stdio: 'ignore' } );
+
+interrupt .then (
+
+() => this .process ? this .process .kill ( 'SIGINT' ) : undefined
+
+);
+
+return await new Promise ( ( resolve, reject ) => {
+
+this .process .on ( 'exit', ( ... status ) => {
+
+delete this .process;
+
+resolve ( [
+
+"Finished playing Oscilla with status:",
+status = status .filter ( status => status !== null ) .pop ()
+
+] );
+
+} );
+
+} );
 
 };
 

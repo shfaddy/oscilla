@@ -26,6 +26,7 @@
   "license": "Unlicense",
   "author": "Shaikh Faddy <shfaddy@gmail.com> (https://github.com/shfaddy#README)",
   "type": "module",
+  "main": "server.js",
   "exports": {
     ".": "./scenario/index.js",
     "./*": "./scenario/*.js",

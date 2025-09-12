@@ -1,38 +1,49 @@
 import Parameter from './parameter.js';
 
-export default class Controller extends Set {
+export default class Controller {
 
-constructor ( setting ) {
+constructor ( setting = {} ) {
 
-super ( typeof setting ?.parameters === 'object' ? Object .keys ( setting .parameters ) : undefined );
-
-this .setting = setting;
-
-for ( const parameter of [ ... this ] )
-this [ '$' + parameter ] = new Parameter ( setting .parameters [ parameter ] );
+this .setting = Object .assign ( Object .create ( setting ), { controller: this } );
 
 };
 
-async $_director ( _, ... argv ) {
+$_producer () {
 
-const { play: $ } = _;
-
-if ( ! argv .length )
-return Promise .all ( [ ... this ] .map (
-
-async parameter => [ parameter, await $ ( parameter ) ] .join ( ' = ' )
-
-) );
+if ( typeof this .setting .parameters === 'object' )
+for ( const parameter of Object .keys ( this .setting .parameters ) )
+this [ '$' + parameter ] = new Parameter ( this .setting .parameters [ parameter ] );
 
 };
 
-$parameters ( { play: $ } ) {
+[ '$--parameter' ] = Parameter;
 
-return Promise .all ( [ ... this ] .map (
+async [ '$--fields' ] ( { play: $ } ) {
 
-parameter => $ ( parameter, Symbol .for ( 'wrapped' ) )
+return Promise .all (
 
-) );
+( await $ ( '--directory', 'Parameter' ) )
+.map (
+
+( [ type, parameter ] ) => $ ( parameter, '--wrapped' )
+
+)
+
+);
+
+};
+
+async $_director ( { play: $ } ) {
+
+return Promise .all (
+
+( await $ ( '--directory', 'Parameter' ) ) .map (
+
+async ( [ type, parameter ] ) => [ parameter, await $ ( parameter ) ] .join ( ' = ' )
+
+)
+
+);
 
 };
 
