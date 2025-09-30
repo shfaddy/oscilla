@@ -7,12 +7,14 @@ constructor ( setting = {} ) {
 
 super ( setting );
 
+this .note = ++setting .instruments;
+
 Object .assign ( this .setting, {
 
 instrument: this,
 parameters: {
 
-note: { value: ++setting .instruments },
+note: { value: this .note },
 step: { value: '0' },
 length: { value: '0' }
 
@@ -22,11 +24,36 @@ length: { value: '0' }
 
 };
 
+storage = new Map;
+instance = 0;
+
+async [ '$--instance' ] ( { play: $ }, ... argv ) {
+
+if ( ! argv .length )
+throw "What would the name of the new instrument instance be?";
+
+const instance = argv .shift ();
+
+if ( ! this .storage .has ( instance ) )
+this .storage .set ( instance, ++this .instance % 10 === 0 ? ++this .instance : this .instance );
+
+await $ ( 'note', '=', `${ this .note }.${ this .storage .get ( instance ) }` );
+
+return true;
+
+};
+
 [ '$--header' ] = new Code;
 
 [ '$--body' ] = new Code;
 
 async [ '$*' ] ( { play: $ }, ... argv ) {
+
+await Promise .all ( ( await $ ( '--directory', 'Instrument' ) ) .map (
+
+( [ type, instrument ] ) => $ ( instrument, '*', ... argv )
+
+) );
 
 if ( argv .length )
 await $ ( 'step', '=', argv .shift () );
@@ -37,7 +64,11 @@ await $ ( 'tone', '=', argv .shift () );
 if ( argv .length )
 await $ ( 'length', '=', argv .shift () );
 
-return $ ( '+', ( [ 'i', ... await $ ( '--fields' ) ] .join ( ' ' ) ) );
+await $ ( '+', ( [ 'i', ... await $ ( '--fields' ) ] .join ( ' ' ) ) );
+
+return argv .length ?
+$ ( '*', await $ ( 'step', '--value' ), `${ await $ ( 'tone', '--value' ) } + ${ argv .shift () }`, await $ ( 'length', '--value' ), ... argv )
+: true;
 
 };
 
@@ -47,35 +78,38 @@ get [ '$--score' ] () { return this .setting .score };
 
 async [ '$--parameters' ] ( { play: $ } ) {
 
-const parameters = await $ ( '--directory', 'Parameter' ) .then ( directory => directory .map (
-
-( [ type, parameter ], index ) => parameter
-
-) );
-
-return [
-
-`#define parameters #${ parameters .slice ( 3 ) .map (
-
-( parameter, index ) => `p${ index + 4 }`
-
-) .join ( ', ' ) }#`,
-
-... await Promise .all ( parameters .map ( async ( parameter, index ) => {
+const format = [];
+const values = [];
+const parameters = await Promise .all ( ( await $ ( '--directory', 'Parameter' ) )
+.map ( async ( [ type, parameter ], index ) => {
 
 const field = 'p' + ++index
 const code = [ `#define p_${ parameter } #${ field }#` ];
 const capitalized = parameter [ 0 ] .toUpperCase () + parameter .slice ( 1 );
+let variable;
 
-if ( await $ ( parameter, '--type' ) === 'number' ) 
-code .push ( `iP${ capitalized } init ${ field }` );
+if ( await $ ( parameter, '--type' ) === 'number' ) {
 
-else
-code .push ( `SP${ capitalized } strget ${ field }` );
+code .push ( `${ variable = ( 'iP' + capitalized ) } init ${ field }` );
+format .push ( '%f' );
+values .push ( variable );
 
-return code .join ('\n' );
+} else {
 
-} ) )
+code .push ( `${ variable = ( 'SP' + capitalized ) } strget ${ field }` );
+format .push ( '"%s"' );
+values .push ( variable );
+
+}
+
+return code .join ( '\n' );
+
+} ) );
+
+return [
+
+... parameters,
+... ( format .length > 3 ? [ `SParameters sprintf {{${ format .slice ( 3 ) .join ( ' ' ) }}}, ${ values .slice ( 3 ) .join ( ', ' ) }` ] : [] )
 
 ];
 
@@ -90,9 +124,9 @@ const header = await $ ( '--header' );
 if ( header .length )
 code .push ( header );
 
-code .push ( `#define ${ await $ ( '--direction' ) } #${ await $ ( 'note', '--value' ) }#` );
+code .push ( `#define ${ await $ ( '--direction' ) } #${ this .note }#` );
 
-code .push ( `instr $${ await $ ( '--direction' ) }` );
+code .push ( `instr $${ await $ ( '--direction' ) }, ${ await $ ( '--direction' ) }` );
 
 const parameters = await $ ( '--parameters' );
 

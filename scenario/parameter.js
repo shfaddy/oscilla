@@ -103,11 +103,13 @@ return combination .join ( '' );
 
 get [ '$--type' ] () { return this .type };
 
-[ '$--number' ] ( { play: $ } ) {
+[ '$--number' ] ( { play: $ }, ... argv ) {
 
 this .type = 'number';
 this .combinator = [ '+', '(', ')' ];
 this .wrapper = [ '[', ']' ];
+
+return $ ( ... argv );
 
 };
 
@@ -144,13 +146,13 @@ throw "Invalid wrapper";
 
 };
 
-[ '$--string' ] ( { play: $ } ) {
+[ '$--string' ] ( { play: $ }, ... argv ) {
 
 this .type = 'string';
 this .combinator = [ ' ', '', '' ];
 this .wrapper = [ '"', '"' ];
 
-return $ ();
+return $ ( ... argv );
 
 };
 
@@ -184,10 +186,7 @@ attachment = [];
 
 [ '$--attach' ] ( _, ... argv ) {
 
-if ( ! argv .length )
-throw "Nothing to attach";
-
-this .attachment = [ ... this .attachment, ... argv ];
+this .attachment = argv .length ? [ ... this .attachment, ... argv ] : [];
 
 return _ .play ();
 

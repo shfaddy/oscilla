@@ -13,7 +13,7 @@ prefix: [ 'oscilla' ]
 
 } catch ( error ) {
 
-console .error ( "Scenarist got killed!" );
+console .error ( "Oscilla has crashed" );
 console .error ( error );
 
 }
